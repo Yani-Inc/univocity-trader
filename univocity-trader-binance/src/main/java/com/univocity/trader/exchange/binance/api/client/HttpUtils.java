@@ -1,6 +1,7 @@
 package com.univocity.trader.exchange.binance.api.client;
 
 import io.netty.channel.*;
+import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.*;
 import org.asynchttpclient.proxy.ProxyServer;
 
@@ -14,16 +15,22 @@ public abstract class HttpUtils {
      * @param eventLoop
      * @return new instance of AsyncHttpClient for EventLoop
      */
-    public static AsyncHttpClient newAsyncHttpClient(EventLoopGroup eventLoop, int maxFrameSize) {
-        return newAsyncHttpClient(eventLoop, maxFrameSize, null);
-    }
+    public static AsyncHttpClient newAsyncHttpClient(
+            EventLoopGroup eventLoop, int maxFrameSize, ProxyServer proxyServer, String username, String password) {
 
-    public static AsyncHttpClient newAsyncHttpClient(EventLoopGroup eventLoop, int maxFrameSize, ProxyServer proxyServer) {
         DefaultAsyncHttpClientConfig.Builder config = Dsl.config()
                 .setEventLoopGroup(eventLoop)
                 .setProxyServer(proxyServer)
                 .addChannelOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(DEFAULT_CONNECTION_TIMEOUT.toMillis()))
                 .setWebSocketMaxFrameSize(maxFrameSize);
+
+        // Setup authentication
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            Realm realm = new Realm.Builder(username, password)
+                    .setScheme(Realm.AuthScheme.BASIC)
+                    .build();
+            config.setRealm(realm);
+        }
         return Dsl.asyncHttpClient(config);
     }
 }

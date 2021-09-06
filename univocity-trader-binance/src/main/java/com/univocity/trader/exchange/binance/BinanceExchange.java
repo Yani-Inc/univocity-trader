@@ -193,16 +193,20 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 	}
 
 	public void setupAsyncHttpClient(ProxyServer proxyServer) {
+		setupAsyncHttpClient(proxyServer, null, null);
+	}
+
+	public void setupAsyncHttpClient(ProxyServer proxyServer, String username, String password) {
 		if (this.asyncHttpClient == null) {
 			this.proxyServer = proxyServer;
-			this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer);
+			this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer, username, password);
 		} else {
 			log.warn("AsyncHttpClient already created !");
 		}
 	}
 
 	public void setupAsyncHttpClient() {
-		this.setupAsyncHttpClient(null);
+		this.setupAsyncHttpClient(null, null, null);
 	}
 
 	private BinanceApiWebSocketClient socketClient() {
