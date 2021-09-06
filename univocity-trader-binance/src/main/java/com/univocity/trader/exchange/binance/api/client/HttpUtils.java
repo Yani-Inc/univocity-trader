@@ -16,20 +16,16 @@ public abstract class HttpUtils {
      * @return new instance of AsyncHttpClient for EventLoop
      */
     public static AsyncHttpClient newAsyncHttpClient(
-            EventLoopGroup eventLoop, int maxFrameSize, ProxyServer proxyServer, String username, String password) {
+            EventLoopGroup eventLoop, int maxFrameSize, ProxyServer proxyServer) {
 
         DefaultAsyncHttpClientConfig.Builder config = Dsl.config()
                 .setEventLoopGroup(eventLoop)
-                .setProxyServer(proxyServer)
                 .addChannelOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(DEFAULT_CONNECTION_TIMEOUT.toMillis()))
                 .setWebSocketMaxFrameSize(maxFrameSize);
 
-        // Setup authentication
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            Realm realm = new Realm.Builder(username, password)
-                    .setScheme(Realm.AuthScheme.BASIC)
-                    .build();
-            config.setRealm(realm);
+        // Setup proxy
+        if (proxyServer != null) {
+            config.setProxyServer(proxyServer);
         }
         return Dsl.asyncHttpClient(config);
     }

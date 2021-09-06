@@ -10,6 +10,7 @@ import com.univocity.trader.indicators.base.*;
 import com.univocity.trader.utils.*;
 import io.netty.channel.*;
 import io.netty.channel.nio.*;
+import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.*;
 import org.asynchttpclient.proxy.ProxyServer;
 import org.slf4j.*;
@@ -192,21 +193,33 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 		return symbolInformation;
 	}
 
-	public void setupAsyncHttpClient(ProxyServer proxyServer) {
-		setupAsyncHttpClient(proxyServer, null, null);
-	}
-
-	public void setupAsyncHttpClient(ProxyServer proxyServer, String username, String password) {
+	public void setupAsyncHttpClient(String ip, Integer port, String username, String password) {
 		if (this.asyncHttpClient == null) {
-			this.proxyServer = proxyServer;
-			this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer, username, password);
+
+			if (StringUtils.isNotBlank(ip) && port != null) {
+				ProxyServer.Builder proxyServer = new ProxyServer.Builder(ip, port);
+
+				// Setup authentication
+				if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+					Realm realm = new Realm.Builder(username, password)
+							.setScheme(Realm.AuthScheme.BASIC)
+							.setUsePreemptiveAuth(true)
+							.setRealmName(username)
+							.build();
+					proxyServer.setRealm(realm);
+				}
+
+				this.proxyServer = proxyServer.build();
+			}
+
+			this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer);
 		} else {
 			log.warn("AsyncHttpClient already created !");
 		}
 	}
 
 	public void setupAsyncHttpClient() {
-		this.setupAsyncHttpClient(null, null, null);
+		this.setupAsyncHttpClient(null, null, null, null);
 	}
 
 	private BinanceApiWebSocketClient socketClient() {
