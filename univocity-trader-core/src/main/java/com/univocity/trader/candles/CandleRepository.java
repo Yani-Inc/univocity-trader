@@ -1,5 +1,6 @@
 package com.univocity.trader.candles;
 
+import com.univocity.trader.utils.ThreadName;
 import org.slf4j.*;
 
 import java.time.*;
@@ -35,6 +36,7 @@ public abstract class CandleRepository {
 
 		final BlockingQueue<Candle> queue = (BlockingQueue<Candle>) out;
 		Thread process = new Thread(readingProcess);
+		process.setName(ThreadName.generateNewName());
 		process.setDaemon(true);
 		process.start();
 

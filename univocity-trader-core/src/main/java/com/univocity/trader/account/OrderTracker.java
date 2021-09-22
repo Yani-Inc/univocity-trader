@@ -1,5 +1,6 @@
 package com.univocity.trader.account;
 
+import com.univocity.trader.utils.ThreadName;
 import org.slf4j.*;
 
 import java.util.*;
@@ -37,8 +38,7 @@ public final class OrderTracker {
 		if (account.isSimulated()) {
 			return;
 		}
-		new Thread(() -> {
-			Thread.currentThread().setName("Order " + order.getOrderId() + " monitor: " + order.getSide() + " " + order.getSymbol());
+		Thread thread = new Thread(() -> {
 			Order o = order;
 			Order updated;
 			while (true) {
@@ -60,7 +60,9 @@ public final class OrderTracker {
 					return;
 				}
 			}
-		}).start();
+		});
+		thread.setName(ThreadName.generateNewName() + "-Order " + order.getOrderId() + " monitor: " + order.getSide() + " " + order.getSymbol());
+		thread.start();
 	}
 
 	public boolean waitingForFill(String assetSymbol, Order.Side side, Trade.Side tradeSide) {

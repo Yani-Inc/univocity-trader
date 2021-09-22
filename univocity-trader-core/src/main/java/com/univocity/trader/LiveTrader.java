@@ -40,7 +40,7 @@ public abstract class LiveTrader<T, C extends Configuration<C, A>, A extends Acc
 
 	private class PollThread extends Thread {
 		public PollThread() {
-			setName("candle poller");
+			super(ThreadName.generateNewName() + "candle poller");
 		}
 
 		public void run() {
@@ -221,7 +221,7 @@ public abstract class LiveTrader<T, C extends Configuration<C, A>, A extends Acc
 
 
 	private void runLiveStream() {
-		new Thread(() -> {
+		Thread thread = new Thread(() -> {
 			log.debug("Starting web socket. Retry count: {}", retryCount);
 			if (retryCount.get() > 0) {
 				try {
@@ -255,7 +255,9 @@ public abstract class LiveTrader<T, C extends Configuration<C, A>, A extends Acc
 					retryRunWebsocket();
 				}
 			});
-		}).start();
+		});
+		thread.setName(ThreadName.generateNewName());
+		thread.start();
 
 		if (retryCount.get() == 0) {
 			clients.forEach(c -> {

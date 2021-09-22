@@ -1,6 +1,7 @@
 package com.univocity.trader.exchange.binance;
 
 import com.univocity.trader.exchange.binance.api.client.BinanceApiRestClient;
+import com.univocity.trader.utils.ThreadName;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,8 +19,10 @@ public class KeepAliveUserDataStream {
     
     public void start() {
         this.listenKey = client.startUserDataStream();
+        final String threadName = ThreadName.generateNewName();
         TimerTask task = new TimerTask() {
             public void run() {
+                Thread.currentThread().setName(threadName);
                 client.ping();
                 client.keepAliveUserDataStream(listenKey);
             }
