@@ -4,6 +4,7 @@ import com.univocity.trader.exchange.binance.api.client.*;
 import com.univocity.trader.exchange.binance.api.client.exception.*;
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
+import com.univocity.trader.utils.ThreadName;
 import org.asynchttpclient.ws.*;
 import org.slf4j.*;
 
@@ -19,6 +20,8 @@ public class BinanceApiWebSocketListener<T> implements WebSocketListener {
 
     private WebSocket webSocket = null;
     private String wsName = null;
+
+    private String threadName = ThreadName.generateNewName();
 
     public BinanceApiWebSocketListener(BinanceApiCallback<T> callback, Class<T> eventClass) {
         this.callback = callback;
@@ -54,6 +57,7 @@ public class BinanceApiWebSocketListener<T> implements WebSocketListener {
     public void onOpen(WebSocket websocket) {
         this.webSocket = websocket;
         this.wsName = websocket.toString();
+        Thread.currentThread().setName(this.threadName);
         log.info(String.format("WebSocket %s opened", wsName));
     }
 
