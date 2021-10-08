@@ -223,24 +223,22 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 	}
 
 	private BinanceApiWebSocketClient socketClient() {
-		//if (socketClient == null) {
-		this.setupAsyncHttpClient();
-		this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer);
-		BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, apiSecret == null ? null : new String(apiSecret), asyncHttpClient, isTestNet);
-		socketClient = factory.newWebSocketClient();
-		//}
+		if (socketClient == null) {
+			this.setupAsyncHttpClient();
+			BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, apiSecret == null ? null : new String(apiSecret), asyncHttpClient, isTestNet);
+			socketClient = factory.newWebSocketClient();
+		}
 		return socketClient;
 	}
 
 
 
 	private BinanceApiRestClient restClient() {
-		//if (restClient == null) {
-		this.setupAsyncHttpClient();
-		this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer);
-		BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, apiSecret == null ? null : new String(apiSecret), asyncHttpClient, isTestNet);
-		restClient = factory.newRestClient();
-		//}
+		if (restClient == null) {
+			this.setupAsyncHttpClient();
+			BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, apiSecret == null ? null : new String(apiSecret), asyncHttpClient, isTestNet);
+			restClient = factory.newRestClient();
+		}
 		return restClient;
 	}
 

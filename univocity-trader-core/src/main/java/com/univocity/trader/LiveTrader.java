@@ -212,7 +212,7 @@ public abstract class LiveTrader<T, C extends Configuration<C, A>, A extends Acc
 	public void run() {
 		initialize();
 		runLiveStream();
-		runKeepAlive();
+		//runKeepAlive();
 	}
 
 	private void runKeepAlive() {
