@@ -23,7 +23,7 @@ public class KeepAliveUserDataStream {
     
     public void start() {
         this.listenKey = client.startUserDataStream();
-        final String threadName = ThreadName.generateNewName() + "-";
+        final String threadName = ThreadName.generateNewName();
         TimerTask task = new TimerTask() {
             public void run() {
                 try {

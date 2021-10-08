@@ -456,13 +456,13 @@ public final class Trade implements Comparable<Trade> {
 
 					final double cost = (totalSpent * (soldUnits / this.totalUnits));
 					actualProfitLoss = totalSold - cost;
-					if (Double.isNaN(actualProfitLoss)) {
+					/*if (Double.isNaN(actualProfitLoss)) {
 						throw new IllegalStateException("Profit/loss amount can't be determined");
-					}
+					} Not needed for the moment */
 					actualProfitLossPct = positivePriceChangePct(averagePrice, exitPrice);
-					if (Double.isNaN(actualProfitLossPct)) {
+					/*if (Double.isNaN(actualProfitLossPct)) {
 						throw new IllegalStateException("Profit/loss % can't be determined");
-					}
+					} Not needed for the moment */
 				}
 				position.clear();
 				exitOrders.clear();

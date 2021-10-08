@@ -121,7 +121,7 @@ public class DatabaseCandleRepository extends CandleRepository {
 		} catch (Exception ex) {
 			if (ex instanceof DuplicateKeyException) {
 				if (!initializing) {
-					log.error("Skipping duplicate " + symbol + " Tick: " + tick);
+					log.warn("Skipping duplicate " + symbol + " Tick: " + tick);
 				}
 			} else {
 				log.error("Error persisting " + symbol + " Tick: " + tick, ex);
