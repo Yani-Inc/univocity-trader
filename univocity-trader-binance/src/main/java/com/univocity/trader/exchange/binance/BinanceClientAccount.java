@@ -52,7 +52,7 @@ class BinanceClientAccount implements ClientAccount {
 
 		factory = BinanceApiClientFactory.newInstance(apiKey, secret, asyncHttpClient);
 		client = factory.newRestClient();
-		new KeepAliveUserDataStream(client).start();
+		//new KeepAliveUserDataStream(client).start();
 	}
 
 	public double getMinimumBnbAmountToKeep() {
