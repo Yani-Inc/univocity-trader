@@ -7,7 +7,7 @@ import java.time.*;
 
 public abstract class HttpUtils {
 
-	private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(10);
+	private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(30);
 
 	/**
 	 * @param eventLoop

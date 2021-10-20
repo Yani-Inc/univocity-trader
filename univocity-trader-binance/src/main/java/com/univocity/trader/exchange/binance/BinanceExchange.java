@@ -10,7 +10,6 @@ import com.univocity.trader.indicators.base.*;
 import com.univocity.trader.utils.*;
 import io.netty.channel.*;
 import io.netty.channel.nio.*;
-import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.*;
 import org.asynchttpclient.proxy.ProxyServer;
 import org.slf4j.*;
@@ -48,7 +47,7 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 		this.apiKey = clientConfiguration.apiKey();
 		this.apiSecret = clientConfiguration.secret();
 		this.isTestNet = clientConfiguration.isTestNet();
-		this.binanceClientAccount = new BinanceClientAccount(clientConfiguration.apiKey(), new String(clientConfiguration.secret()), this);
+		this.binanceClientAccount = new BinanceClientAccount(clientConfiguration, this);
 		return this.binanceClientAccount;
 	}
 
@@ -128,7 +127,7 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 
 	private final Map<String, double[]> latestPrices = new HashMap<>();
 
-	private void priceReceived(String symbol, double price){
+	private void priceReceived(String symbol, double price) {
 		latestPrices.compute(symbol, (s, v) -> {
 			if (v == null) {
 				return new double[]{price};
@@ -195,23 +194,7 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 
 	public void setupAsyncHttpClient(String ip, Integer port, String username, String password) {
 		if (this.asyncHttpClient == null) {
-
-			if (StringUtils.isNotBlank(ip) && port != null) {
-				ProxyServer.Builder proxyServer = new ProxyServer.Builder(ip, port);
-
-				// Setup authentication
-				if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-					Realm realm = new Realm.Builder(username, password)
-							.setScheme(Realm.AuthScheme.BASIC)
-							.setUsePreemptiveAuth(true)
-							.setRealmName(username)
-							.build();
-					proxyServer.setRealm(realm);
-				}
-
-				this.proxyServer = proxyServer.build();
-			}
-
+			this.proxyServer = HttpUtils.buildProxyServer(ip, port, username, password);
 			this.asyncHttpClient = HttpUtils.newAsyncHttpClient(eventLoopGroup, 65536, this.proxyServer);
 		} else {
 			log.warn("AsyncHttpClient already created !");
@@ -245,10 +228,6 @@ public class BinanceExchange implements Exchange<Candlestick, Account> {
 	@Override
 	public int historicalCandleCountLimit() {
 		return 1000;
-	}
-
-	public ProxyServer getProxyServer() {
-		return this.proxyServer;
 	}
 
 	//	@Override

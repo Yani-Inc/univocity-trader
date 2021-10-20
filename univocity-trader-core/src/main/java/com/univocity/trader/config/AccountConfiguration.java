@@ -33,6 +33,12 @@ public abstract class AccountConfiguration<T extends AccountConfiguration<T>> ex
 	private String email;
 	private TimeZone timeZone;
 
+	private String proxyIp;
+	private Integer proxyPort;
+
+	private String proxyUsername;
+	private String proxyPassword;
+
 	private final TreeSet<String> requiredPropertyNames = new TreeSet<>();
 	protected final Map<String, TradingGroup> tradingGroups = new HashMap<>();
 	int marginReservePercentage = 150;
@@ -205,6 +211,44 @@ public abstract class AccountConfiguration<T extends AccountConfiguration<T>> ex
 
 	public T timeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
+		return (T) this;
+
+
+	}
+
+	public String proxyIp() {
+		return proxyIp;
+	}
+
+	public T proxyIp(String proxyIp) {
+		this.proxyIp = proxyIp;
+		return (T) this;
+	}
+
+	public Integer proxyPort() {
+		return proxyPort;
+	}
+
+	public T proxyPort(Integer proxyPort) {
+		this.proxyPort = proxyPort;
+		return (T) this;
+	}
+
+	public String proxyUsername() {
+		return proxyUsername;
+	}
+
+	public T proxyUsernem(String proxyUsername) {
+		this.proxyUsername = proxyUsername;
+		return (T) this;
+	}
+
+	public String proxyPassword() {
+		return proxyPassword;
+	}
+
+	public T proxyPassword(String proxyPassword) {
+		this.proxyPassword = proxyPassword;
 		return (T) this;
 	}
 

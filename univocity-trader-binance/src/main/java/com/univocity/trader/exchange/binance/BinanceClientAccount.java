@@ -6,9 +6,9 @@ import com.univocity.trader.account.OrderBook;
 import com.univocity.trader.account.OrderRequest;
 import com.univocity.trader.account.Trade;
 import com.univocity.trader.account.*;
+import com.univocity.trader.config.AccountConfiguration;
 import com.univocity.trader.exchange.binance.api.client.*;
 import com.univocity.trader.exchange.binance.api.client.domain.*;
-import com.univocity.trader.exchange.binance.api.client.domain.account.Account;
 import com.univocity.trader.exchange.binance.api.client.domain.account.*;
 import com.univocity.trader.exchange.binance.api.client.domain.account.request.*;
 import com.univocity.trader.exchange.binance.api.client.domain.market.*;
@@ -16,6 +16,7 @@ import com.univocity.trader.exchange.binance.api.client.exception.*;
 import io.netty.channel.*;
 import io.netty.channel.nio.*;
 import org.asynchttpclient.*;
+import org.asynchttpclient.proxy.ProxyServer;
 import org.slf4j.*;
 
 import java.math.*;
@@ -42,15 +43,15 @@ class BinanceClientAccount implements ClientAccount {
 	private BinanceExchange exchangeApi;
 	private double minimumBnbAmountToKeep = 1.0;
 
-	public BinanceClientAccount(String apiKey, String secret, BinanceExchange exchangeApi) {
+	public BinanceClientAccount(Account clientConfiguration, BinanceExchange exchangeApi) {
 		this.exchangeApi = exchangeApi;
 
 		final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(2);
 		final AsyncHttpClient asyncHttpClient = HttpUtils.newAsyncHttpClient(
-				eventLoopGroup, 65536, exchangeApi.getProxyServer()
+				eventLoopGroup, 65536, HttpUtils.buildProxyServer(clientConfiguration)
 		);
 
-		factory = BinanceApiClientFactory.newInstance(apiKey, secret, asyncHttpClient);
+		factory = BinanceApiClientFactory.newInstance(clientConfiguration.apiKey(), String.valueOf(clientConfiguration.secret()), asyncHttpClient);
 		client = factory.newRestClient();
 		//new KeepAliveUserDataStream(client).start();
 	}
@@ -180,7 +181,7 @@ class BinanceClientAccount implements ClientAccount {
 
 	@Override
 	public ConcurrentHashMap<String, Balance> updateBalances(boolean force) {
-		Account account = client.getAccount();
+		com.univocity.trader.exchange.binance.api.client.domain.account.Account account = client.getAccount();
 		List<AssetBalance> balances = account.getBalances();
 
 		ConcurrentHashMap<String, Balance> out = new ConcurrentHashMap<>();

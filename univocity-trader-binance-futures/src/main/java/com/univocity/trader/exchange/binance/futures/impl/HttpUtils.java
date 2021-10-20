@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class HttpUtils {
 
-    private static final long REQUEST_TIMEOUT_MS = 1000;
-    private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(10);
+    private static final long REQUEST_TIMEOUT_MS = 30000;
+    private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(30);
     private static final PropertyBasedConfiguration propertyConfiguration = new PropertyBasedConfiguration.AnyOneBuilder().build("nwscu.properties", "config/nwscu.properties");
 
     public static OkHttpClient newOkHttpClient() {
